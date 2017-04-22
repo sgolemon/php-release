@@ -1,0 +1,36 @@
+## IDs to be used in GIT commits (required)
+COMMITTER_NAME="Ada Lovelace"
+COMMITTER_EMAIL="ada@example.com"
+
+## Planned release date (optional; default="+2 days")
+# RELEASE_DATE="2017-07-20"
+
+## Where to build/cut this release from (required)
+RELEASE_BRANCH="PHP-7.2"
+
+## Semantic identifier for this release (required)
+## Alpha releases in the form "#.#.#alpha..." will NOT cut a new branch
+## All other release versions will cut branch "PHP-#.#.#" unless it exists already
+RELEASE_VERSION="7.2.0alpha1"
+
+## If provided, the NEWS file will be auto prepared for the next release (optional; recommended)
+RELEASE_NEXT="7.2.0alpha2"
+
+## Limit `git clone` checkout depth (optional; default 1000)
+# CLONE_DEPTH=1000
+
+## Email address of the GPG key to use for signing tarballs (optional; default: $COMMITTER_EMAIL)
+## This value is only used to help produce helpful finalization instructions
+# GPG_USER="ada@example.com"
+
+## GPG Key Fingerprint to use in signing git tags (optional; default: none)
+## This value is only used to help produce helpful finalization instructions
+# GPG_KEY="123456789012345678901234"
+
+## Set to 0 to allow `run-tests.php` to encounter failures without aborting packaging (optional; default on)
+# ABORT_ON_TEST_FAILURES=1
+
+## Set to 1 to only build debug-ZTS version of PHP (optional; default off)
+## Otherwise, all four debug/non-debug and ZTS/NTS combinations will be tested
+# DEBUG_ZTS_ONLY=0
+
