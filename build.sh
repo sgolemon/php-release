@@ -25,6 +25,16 @@ if [ "$VERSION_PATCH" != "$(echo $1 | cut -d '.' -f 3)" ]; then
 fi
 VERSION_ID=$(($((VERSION_MAJOR*10000))+$((VERSION_MINOR*100))+$((VERSION_PATCH+0))))
 
+# Reveal our plan
+echo "php-release builder"
+echo "-------------------"
+echo "COMMITTER_NAME=${COMMITTER_NAME}"
+echo "COMMITTER_EMAIL=${COMMITTER_EMAIL}"
+echo "RELEASE_DATE=${RELEASE_DATE}"
+echo "RELEASE_BRANCH=${RELEASE_BRANCH}"
+echo "RELEASE_VERSION=${RELEASE_VERSION}"
+echo "-------------------"
+
 # Clean up workspace
 cd /workspace
 rm -rf php-src
