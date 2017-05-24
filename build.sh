@@ -137,6 +137,7 @@ make_test() {
 	mkdir -p /workspace/log
 	cd /workspace/php-src
 	TEST_FPM_RUN_AS_ROOT=1 \
+	MYSQL_TEST_SKIP_CONNECT_FAILURE=1 \
 	REPORT_EXIT_STATUS=${ABORT_ON_TEST_FAILURES:-1} \
 	sapi/cli/php run-tests.php \
 		-p "$(pwd)/sapi/cli/php" -q -s /workspace/log/tests.$LOGEXT \
