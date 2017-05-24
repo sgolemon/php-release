@@ -60,14 +60,27 @@ git config user.name "$COMMITTER_NAME"
 git config user.email "$COMMITTER_EMAIL"
 git remote set-url origin --push git@git.php.net:php-src.git
 
+# Update NEWS
+cd /workspace/php-src
+sed -i \
+	-e "s/?? ??? \(????\|[0-9]\{4\}\),.*/$(date -d ${RELEASE_DATE} '+%d %b %Y'), PHP ${RELEASE_VERSION}/g" \
+	NEWS
+git add NEWS
+git commit -m "Update NEWS for PHP ${RELEASE_VERSION}"
+git show | cat -
+
 # Update CREDITS
 cd /workspace/php-src
 scripts/dev/credits
-CREDITS=""
 if [ ! -z "$(git diff ext/standard/credits_{ext,sapi}.h)" ]; then
-	CREDITS="/CREDITS"
 	git add ext/standard/credits_{ext,sapi}.h
+	git commit -m "Update CREDITS for PHP ${RELEASE_VERSION}"
+	git show | cat -
 fi
+
+# Version bump will be on a spur ending at tag:php-${RELEASE_VERSION}
+# NEWS bump will be on ${RELEASE_BRANCH}
+SPURBASE_COMMIT=$(git rev-parse HEAD)
 
 # Update main/php_version.h
 cd /workspace/php-src
@@ -92,18 +105,11 @@ sed -i \
 	configure.ac
 git add configure.ac
 
-# Update NEWS
-cd /workspace/php-src
-sed -i \
-	-e "s/?? ??? \(????\|[0-9]\{4\}\)/$(date -d ${RELEASE_DATE} '+%d %b %Y')/g" \
-	NEWS
-git add NEWS
-
 # commit
 cd /workspace/php-src
-git commit -m "Update versions/dates$CREDITS for PHP ${RELEASE_VERSION}"
-TAG_COMMIT=$(git rev-parse HEAD)
+git commit -m "Update versions for PHP ${RELEASE_VERSION}"
 git show | cat -
+TAG_COMMIT=$(git rev-parse HEAD)
 
 ########
 
@@ -158,6 +164,9 @@ git tag "php-$RELEASE_VERSION" "$TAG_COMMIT"
 PHPROOT=. ./makedist "$RELEASE_VERSION"
 git tag -d "php-$RELEASE_VERSION"
 
+# Back off of release spur now that we've tagged
+git reset "${SPURBASE_COMMIT}" --hard
+
 # Update NEWS (if requested)
 cd /workspace/php-src
 if [ ! -z "$RELEASE_NEXT" ]; then
@@ -180,14 +189,27 @@ for COMP in gz bz2 xz; do
 done
 echo ""
 
-echo "Run the following commands in workspace/php-src once you've confirmed the release looks good:"
-echo ""
-echo "$ git tag -u '${GPG_KEY:-YOUR_GPG_KEY}' 'php-${RELEASE_VERSION}' -m 'Tag for php ${RELEASE_VERSION}' $TAG_COMMIT"
-echo -n "$ git push origin "
-echo "'$RELEASE_BRANCH' 'php-$RELEASE_VERSION'"
+# Truncate COMMIT hash for readability
+TAG_COMMIT=$(echo "${TAG_COMMIT}" | cut -c 1-10)
+
+echo "Run the following commands in workspace/php-src to sign everything:"
+echo "$ git tag -u '${GPG_KEY:-YOUR_GPG_KEY}' 'php-${RELEASE_VERSION}' -m 'Tag for php ${RELEASE_VERSION}' '$TAG_COMMIT'"
 for COMP in gz bz2 xz; do
-	echo "$ gpg -u ${GPG_USER:-$COMMITTER_EMAIL} --armor --detach-sign php-$RELEASE_VERSION.tar.$COMP"
+	echo "$ gpg -u '${GPG_USER:-$COMMITTER_EMAIL}' --armor --detach-sign 'php-$RELEASE_VERSION.tar.$COMP'"
 done
+echo ""
+
+echo "Verify what you're about to push as a tagged release:"
+echo "$ git log -p 'origin/${RELEASE_BRANCH}..php-${RELEASE_VERSION}'"
+echo ""
+if [ ! -z "$RELEASE_NEXT" ]; then
+  echo "And as the prepared NEWS entry for the next release:"
+  echo "$ git log -p 'origin/${RELEASE_BRANCH}..'"
+  echo ""
+fi
+
+echo "If all is well, push it!"
+echo "$ git push origin 'php-$RELEASE_VERSION' '${RELEASE_NEXT:+${RELEASE_BRANCH}}'"
 echo ""
 
 echo "Make the tarballs available for testing:"
