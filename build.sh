@@ -58,7 +58,7 @@ echo "Building $RELEASE_VERSION from $RELEASE_BRANCH"
 git checkout "$RELEASE_BRANCH"
 git config user.name "$COMMITTER_NAME"
 git config user.email "$COMMITTER_EMAIL"
-git remote set-url origin git@git.php.net:php-src.git
+git remote set-url origin --push git@git.php.net:php-src.git
 
 # Update CREDITS
 cd /workspace/php-src
