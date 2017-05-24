@@ -160,7 +160,7 @@ git tag -d "php-$RELEASE_VERSION"
 cd /workspace/php-src
 if [ ! -z "$RELEASE_NEXT" ]; then
 	sed -i \
-		-e '3s/^/?? ??? ????, PHP ${RELEASE_NEXT}\n\n\n/' \
+		-e "3s/^/?? ??? ????, PHP ${RELEASE_NEXT}\n\n\n/" \
 		NEWS
 	git add NEWS
 	git commit -m "Update NEWS for ${RELEASE_NEXT}"
