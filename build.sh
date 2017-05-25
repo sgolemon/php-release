@@ -52,19 +52,22 @@ git rev-parse -q --verify "$RELEASE_BRANCH" > /dev/null || (
 	exit 1
 )
 
-if [[ "$VERSION_EXTRA" == alpha* ]]; then
-	git rev-parse -q --verify "$POINT_RELEASE_BRANCH" > /dev/null && (
-		echo "Building alpha, but $POINT_RELEASE_BRANCH already exists"
-		exit 1
-	) || true
-else
-	git rev-parse -q --verify "$POINT_RELEASE_BRANCH" > /dev/null || (
-		echo "Cutting $POINT_RELEASE_BRANCH from $RELEASE_BRANCH"
-		git branch "$POINT_RELEASE_BRANCH" "$RELEASE_BRANCH"
-	)
-	RELEASE_BRANCH=$POINT_RELEASE_BRANCH
-fi
 echo "Building $RELEASE_VERSION from $RELEASE_BRANCH"
+if [[ "$VERSION_EXTRA" != alpha* ]]; then
+  if [ "$POINT_RELEASE_BRANCH" != "$RELEASE_BRANCH" ]; then
+    echo "******************************************" 1>&2
+    echo -n "** WARNING: $RELEASE_VERSION probably belongs on $POINT_RELEASE_BRANCH" 1>&2
+    git rev-parse -q --verify "$POINT_RELEASE_BRANCH" > /dev/null && (
+      echo -n ", which does exist" 1>&2
+    ) || true
+    echo ", but is being cut from $RELEASE_BRANCH" 1>&2
+    echo -ne '\007\007\007'
+    echo "******************************************" 1>&2
+	sleep 15
+  fi
+fi
+
+# Get going
 git checkout "$RELEASE_BRANCH"
 git config user.name "$COMMITTER_NAME"
 git config user.email "$COMMITTER_EMAIL"
