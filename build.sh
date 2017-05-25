@@ -39,6 +39,8 @@ echo "-------------------"
 cd /workspace
 rm -rf php-src
 rm -f  log/{config,make,tests}.{debug-,}[nz]ts
+mkdir -p /workspace/bin
+cp /manifest.sh /sign.sh /workspace/bin/
 
 # Clone from github (public readable),
 # Configure commiter,
@@ -203,15 +205,10 @@ TAG_COMMIT=$(echo "${TAG_COMMIT}" | cut -c 1-10)
 # Output finalization instructions
 echo "-----------------"
 echo "Tarballs prepared"
-mkdir -p /workspace/bin
-cp /manifest.sh /workspace/bin/
 /workspace/bin/manifest.sh "/workspace/php-src/php-$RELEASE_VERSION.tar"
 
-echo "Run the following commands in workspace/php-src to sign everything:"
-echo "$ git tag -u '${GPG_KEY:-YOUR_GPG_KEY}' 'php-${RELEASE_VERSION}' -m 'Tag for php ${RELEASE_VERSION}' '$TAG_COMMIT'"
-for COMP in gz bz2 xz; do
-	echo "$ gpg -u '${GPG_USER:-$COMMITTER_EMAIL}' --armor --detach-sign 'php-$RELEASE_VERSION.tar.$COMP'"
-done
+echo "Run the following command in workspace/php-src to sign everything:"
+echo "$ ../bin/sign.sh . '$RELEASE_VERSION' '$TAG_COMMIT' '${GPG_KEY:-YOUR_GPG_KEY}' '${GPG_USER:-$COMMITTER_EMAIL}'"
 echo ""
 
 echo "Verify what you're about to push as a tagged release:"

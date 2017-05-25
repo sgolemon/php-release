@@ -21,4 +21,5 @@ VOLUME ["/workspace"]
 
 COPY ./build.sh /build.sh
 COPY ./manifest.sh /manifest.sh
+COPY ./sign.sh /sign.sh
 CMD ["/build.sh"]
