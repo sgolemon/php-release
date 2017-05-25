@@ -197,20 +197,15 @@ if [ ! -z "$RELEASE_NEXT" ]; then
 	git commit -m "Update NEWS for ${RELEASE_NEXT}"
 fi
 
+# Truncate COMMIT hash for readability
+TAG_COMMIT=$(echo "${TAG_COMMIT}" | cut -c 1-10)
+
 # Output finalization instructions
 echo "-----------------"
 echo "Tarballs prepared"
-for COMP in gz bz2 xz; do
-	echo "workspace/php-src/php-$RELEASE_VERSION.tar.$COMP"
-	echo -n "md5:    "
-	md5sum "/workspace/php-src/php-$RELEASE_VERSION.tar.$COMP" | cut -d ' ' -f 1
-	echo -n "sha256: "
-	sha256sum "/workspace/php-src/php-$RELEASE_VERSION.tar.$COMP" | cut -d ' ' -f 1
-done
-echo ""
-
-# Truncate COMMIT hash for readability
-TAG_COMMIT=$(echo "${TAG_COMMIT}" | cut -c 1-10)
+mkdir -p /workspace/bin
+cp /manifest.sh /workspace/bin/
+/workspace/bin/manifest.sh "/workspace/php-src/php-$RELEASE_VERSION.tar"
 
 echo "Run the following commands in workspace/php-src to sign everything:"
 echo "$ git tag -u '${GPG_KEY:-YOUR_GPG_KEY}' 'php-${RELEASE_VERSION}' -m 'Tag for php ${RELEASE_VERSION}' '$TAG_COMMIT'"
@@ -239,3 +234,6 @@ if [ -z "$VERSION_EXTRA" ]; then
 	echo "3. This appears to be a release build.  Reference README.RELEASE_PROCESS for further instruction."
 fi
 echo ""
+
+echo "Generate the announcement manifest with:"
+echo "$ ../bin/manifest.sh php-$RELEASE_VERSION.tar"

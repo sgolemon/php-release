@@ -20,4 +20,5 @@ RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h
 VOLUME ["/workspace"]
 
 COPY ./build.sh /build.sh
+COPY ./manifest.sh /manifest.sh
 CMD ["/build.sh"]
