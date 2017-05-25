@@ -162,12 +162,19 @@ make_test() {
 		-p "$(pwd)/sapi/cli/php" -q -s /workspace/log/tests.$LOGEXT \
 		--offline --set-timeout 120
 }
-if [ -z "$DEBUG_ZTS_ONLY" ]; then
-	make_test 0 0
-	make_test 0 1
-	make_test 1 0
+
+MAKE_TESTS="${MAKE_TESTS:-2}"
+if [ "${MAKE_TESTS}" -ge 1 ]; then
+	# 0 No tests
+	# 1 Debug-ZTS only
+	# 2 All tests
+	if [ "${MAKE_TESTS}" -ge 2 ]; then
+		make test 0 0
+		make_test 0 1
+		make_test 1 0
+	fi
+	make_test 1 1
 fi
-make_test 1 1
 
 # Make tarballs/stubs and relocate them
 cd /workspace/php-src

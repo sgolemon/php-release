@@ -30,7 +30,8 @@ RELEASE_NEXT="7.2.0alpha2"
 ## Set to 0 to allow `run-tests.php` to encounter failures without aborting packaging (optional; default on)
 # ABORT_ON_TEST_FAILURES=1
 
-## Set to 1 to only build debug-ZTS version of PHP (optional; default off)
-## Otherwise, all four debug/non-debug and ZTS/NTS combinations will be tested
-# DEBUG_ZTS_ONLY=0
+## Set to 0 to disable tests (won't even try to compile)
+## Set to 1 to only build/test debug-ZTS version
+## Set to 2 to build/test all four combinations (optional; default 2)
+# MAKE_TESTS=2
 
