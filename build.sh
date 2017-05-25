@@ -219,7 +219,7 @@ if [ ! -z "$RELEASE_NEXT" ]; then
 fi
 
 echo "If all is well, push it!"
-echo "$ git push origin 'php-$RELEASE_VERSION' '${RELEASE_NEXT:+${RELEASE_BRANCH}}'"
+echo "$ git push origin 'php-$RELEASE_VERSION' ${RELEASE_NEXT:+'${RELEASE_BRANCH}'}"
 echo ""
 
 echo "Make the tarballs available for testing:"
