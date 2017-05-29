@@ -171,7 +171,7 @@ if [ "${MAKE_TESTS}" -ge 1 ]; then
   # 1 Debug-ZTS only
   # 2 All tests
   if [ "${MAKE_TESTS}" -ge 2 ]; then
-    make test 0 0
+    make_test 0 0
     make_test 0 1
     make_test 1 0
   fi
