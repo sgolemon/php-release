@@ -2,6 +2,12 @@
 COMMITTER_NAME="Ada Lovelace"
 COMMITTER_EMAIL="ada@example.com"
 
+## If both are set, workspace/php-src will be
+## auto-chown'd at the end of the build process
+## Values MUST BE NUMERIC (since docker can't see your passwd file, duh)
+# COMMITTER_UID=1000
+# COMMITTER_GID=1000
+
 ## Planned release date (optional; default="+2 days")
 # RELEASE_DATE="2017-07-20"
 

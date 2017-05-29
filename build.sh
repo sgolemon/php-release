@@ -199,6 +199,10 @@ if [ ! -z "$RELEASE_NEXT" ]; then
 	git commit -m "Update NEWS for ${RELEASE_NEXT}"
 fi
 
+if [ ! -z "$COMMITTER_UID" -a ! -z "$COMMITTER_GID" ]; then
+  chown -R "${COMMITTER_UID}.${COMMITTER_GID}" /workspace/php-src
+fi
+
 # Truncate COMMIT hash for readability
 TAG_COMMIT=$(echo "${TAG_COMMIT}" | cut -c 1-10)
 
