@@ -2,8 +2,8 @@
 set -e
 
 if [ ! -f /workspace/config ]; then
-	echo "Missing /workspace/config"
-	exit -1
+  echo "Missing /workspace/config"
+  exit -1
 fi
 . /workspace/config
 
@@ -19,9 +19,9 @@ VERSION_MINOR=$(echo "$RELEASE_VERSION" | cut -d "." -f 2)
 VERSION_PATCH=$(echo "$RELEASE_VERSION" | cut -d "." -f 3 | egrep -o "[0-9]+" | head -n 1)
 POINT_RELEASE_BRANCH="PHP-${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
 if [ "$VERSION_PATCH" != "$(echo $1 | cut -d '.' -f 3)" ]; then
-	# This is an alpha/beta/RC
-	OFFSET=$((${#VERSION_PATCH}+1))
-	VERSION_EXTRA=$(echo "$RELEASE_VERSION" | cut -d "." -f 3 | cut -c "$OFFSET"-)
+  # This is an alpha/beta/RC
+  OFFSET=$((${#VERSION_PATCH}+1))
+  VERSION_EXTRA=$(echo "$RELEASE_VERSION" | cut -d "." -f 3 | cut -c "$OFFSET"-)
 fi
 VERSION_ID=$(($((VERSION_MAJOR*10000))+$((VERSION_MINOR*100))+$((VERSION_PATCH+0))))
 
@@ -50,8 +50,8 @@ git clone --depth="${CLONE_DEPTH:-1000}" git://github.com/php/php-src
 
 cd /workspace/php-src
 git rev-parse -q --verify "$RELEASE_BRANCH" > /dev/null || (
-	echo "$RELEASE_BRANCH does not exist in php-src"
-	exit 1
+  echo "$RELEASE_BRANCH does not exist in php-src"
+  exit 1
 )
 
 echo "Building $RELEASE_VERSION from $RELEASE_BRANCH"
@@ -65,7 +65,7 @@ if [[ "$VERSION_EXTRA" != alpha* ]]; then
     echo ", but is being cut from $RELEASE_BRANCH" 1>&2
     echo -ne '\007\007\007'
     echo "******************************************" 1>&2
-	sleep 15
+    sleep 15
   fi
 fi
 
@@ -78,8 +78,8 @@ git remote set-url origin --push git@git.php.net:php-src.git
 # Update NEWS
 cd /workspace/php-src
 sed -i \
-	-e "s/?? ??? \(????\|[0-9]\{4\}\),.*/$(date -d ${RELEASE_DATE} '+%d %b %Y'), PHP ${RELEASE_VERSION}/g" \
-	NEWS
+    -e "s/?? ??? \(????\|[0-9]\{4\}\),.*/$(date -d ${RELEASE_DATE} '+%d %b %Y'), PHP ${RELEASE_VERSION}/g" \
+    NEWS
 git add NEWS
 git commit -m "Update NEWS for PHP ${RELEASE_VERSION}"
 git show | cat -
@@ -88,9 +88,9 @@ git show | cat -
 cd /workspace/php-src
 scripts/dev/credits
 if [ ! -z "$(git diff ext/standard/credits_{ext,sapi}.h)" ]; then
-	git add ext/standard/credits_{ext,sapi}.h
-	git commit -m "Update CREDITS for PHP ${RELEASE_VERSION}"
-	git show | cat -
+  git add ext/standard/credits_{ext,sapi}.h
+  git commit -m "Update CREDITS for PHP ${RELEASE_VERSION}"
+  git show | cat -
 fi
 
 # Version bump will be on a spur ending at tag:php-${RELEASE_VERSION}
@@ -113,11 +113,11 @@ git add main/php_version.h
 # Update configure.ac
 cd /workspace/php-src
 sed -i \
-	-e "s/^PHP_MAJOR_VERSION=[0-9]\+$/PHP_MAJOR_VERSION=$VERSION_MAJOR/g" \
-	-e "s/^PHP_MINOR_VERSION=[0-9]\+$/PHP_MINOR_VERSION=$VERSION_MINOR/g" \
-	-e "s/^PHP_RELEASE_VERSION=[0-9]\+$/PHP_RELEASE_VERSION=$VERSION_PATCH/g" \
-	-e "s/^PHP_EXTRA_VERSION=\".\+\"$/PHP_EXTRA_VERSION=\"$VERSION_EXTRA\"/g" \
-	configure.ac
+    -e "s/^PHP_MAJOR_VERSION=[0-9]\+$/PHP_MAJOR_VERSION=$VERSION_MAJOR/g" \
+    -e "s/^PHP_MINOR_VERSION=[0-9]\+$/PHP_MINOR_VERSION=$VERSION_MINOR/g" \
+    -e "s/^PHP_RELEASE_VERSION=[0-9]\+$/PHP_RELEASE_VERSION=$VERSION_PATCH/g" \
+    -e "s/^PHP_EXTRA_VERSION=\".\+\"$/PHP_EXTRA_VERSION=\"$VERSION_EXTRA\"/g" \
+    configure.ac
 git add configure.ac
 
 # commit
@@ -129,53 +129,53 @@ TAG_COMMIT=$(git rev-parse HEAD)
 ########
 
 make_test() {
-	LOGEXT="nts"
-	if [ "$2" -eq 1 ]; then
-		LOGEXT="zts"
-	fi
-	if [ "$1" -eq 1 ]; then
-		LOGEXT="debug-$LOGEXT"
-	fi
-	echo "----------------------"
-	echo "Building PHP $LOGEXT"
+  LOGEXT="nts"
+  if [ "$2" -eq 1 ]; then
+    LOGEXT="zts"
+  fi
+  if [ "$1" -eq 1 ]; then
+    LOGEXT="debug-$LOGEXT"
+  fi
+  echo "----------------------"
+  echo "Building PHP $LOGEXT"
 
-	# Build PHP
-	mkdir -p /workspace/log
-	cd /workspace/php-src
-	git clean -xfdq
-	ENABLE_DEBUG=${1:?"DEBUG opt not specific"} \
-	ENABLE_MAINTAINER_ZTS=${2:?"ZTS opt not specified"} \
-	CONFIG_LOG_FILE=/workspace/log/config.$LOGEXT \
-	MAKE_LOG_FILE=/workspace/log/make.$LOGEXT \
-		travis/compile.sh 2> /dev/null
-	BUILT_VERSION=$(./sapi/cli/php -n -v | head -n 1 | cut -d " " -f 2)
-	if [ "$BUILT_VERSION" != "$RELEASE_VERSION" ]; then
-	  echo "**Panic: RELEASE_VERSION=${RELEASE_VERSION}, but BUILT_VERSION=${BUILT_VERSION}"
-	  exit 1
-	fi
+  # Build PHP
+  mkdir -p /workspace/log
+  cd /workspace/php-src
+  git clean -xfdq
+  ENABLE_DEBUG=${1:?"DEBUG opt not specific"} \
+  ENABLE_MAINTAINER_ZTS=${2:?"ZTS opt not specified"} \
+  CONFIG_LOG_FILE=/workspace/log/config.$LOGEXT \
+  MAKE_LOG_FILE=/workspace/log/make.$LOGEXT \
+    travis/compile.sh 2> /dev/null
+  BUILT_VERSION=$(./sapi/cli/php -n -v | head -n 1 | cut -d " " -f 2)
+  if [ "$BUILT_VERSION" != "$RELEASE_VERSION" ]; then
+    echo "**Panic: RELEASE_VERSION=${RELEASE_VERSION}, but BUILT_VERSION=${BUILT_VERSION}"
+    exit 1
+  fi
 
-	# Run tests
-	mkdir -p /workspace/log
-	cd /workspace/php-src
-	TEST_FPM_RUN_AS_ROOT=1 \
-	MYSQL_TEST_SKIP_CONNECT_FAILURE=1 \
-	REPORT_EXIT_STATUS=${ABORT_ON_TEST_FAILURES:-1} \
-	sapi/cli/php run-tests.php \
-		-p "$(pwd)/sapi/cli/php" -q -s /workspace/log/tests.$LOGEXT \
-		--offline --set-timeout 120
+  # Run tests
+  mkdir -p /workspace/log
+  cd /workspace/php-src
+  TEST_FPM_RUN_AS_ROOT=1 \
+  MYSQL_TEST_SKIP_CONNECT_FAILURE=1 \
+  REPORT_EXIT_STATUS=${ABORT_ON_TEST_FAILURES:-1} \
+  sapi/cli/php run-tests.php \
+    -p "$(pwd)/sapi/cli/php" -q -s /workspace/log/tests.$LOGEXT \
+    --offline --set-timeout 120
 }
 
 MAKE_TESTS="${MAKE_TESTS:-2}"
 if [ "${MAKE_TESTS}" -ge 1 ]; then
-	# 0 No tests
-	# 1 Debug-ZTS only
-	# 2 All tests
-	if [ "${MAKE_TESTS}" -ge 2 ]; then
-		make test 0 0
-		make_test 0 1
-		make_test 1 0
-	fi
-	make_test 1 1
+  # 0 No tests
+  # 1 Debug-ZTS only
+  # 2 All tests
+  if [ "${MAKE_TESTS}" -ge 2 ]; then
+    make test 0 0
+    make_test 0 1
+    make_test 1 0
+  fi
+  make_test 1 1
 fi
 
 # Make tarballs/stubs and relocate them
@@ -192,11 +192,11 @@ git reset "${SPURBASE_COMMIT}" --hard
 # Update NEWS (if requested)
 cd /workspace/php-src
 if [ ! -z "$RELEASE_NEXT" ]; then
-	sed -i \
-		-e "3s/^/?? ??? ????, PHP ${RELEASE_NEXT}\n\n\n/" \
-		NEWS
-	git add NEWS
-	git commit -m "Update NEWS for ${RELEASE_NEXT}"
+  sed -i \
+      -e "3s/^/?? ??? ????, PHP ${RELEASE_NEXT}\n\n\n/" \
+      NEWS
+  git add NEWS
+  git commit -m "Update NEWS for ${RELEASE_NEXT}"
 fi
 
 if [ ! -z "$COMMITTER_UID" -a ! -z "$COMMITTER_GID" ]; then
@@ -232,7 +232,7 @@ echo "Make the tarballs available for testing:"
 echo "1. Copy workspace/php-src/php-$RELEASE_VERSION.tar.{gz,bz2,xz}{,.asc} to downloads.php.net:/home/\$USER/public_html/"
 echo "2. Contact internals-win@lists.php.net for Windows build creation"
 if [ -z "$VERSION_EXTRA" ]; then
-	echo "3. This appears to be a release build.  Reference README.RELEASE_PROCESS for further instruction."
+  echo "3. This appears to be a release build.  Reference README.RELEASE_PROCESS for further instruction."
 fi
 echo ""
 
