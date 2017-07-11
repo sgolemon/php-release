@@ -230,7 +230,7 @@ echo ""
 
 echo "Make the tarballs available for testing:"
 echo "1. Copy workspace/php-src/php-$RELEASE_VERSION.tar.{gz,bz2,xz}{,.asc} to downloads.php.net:/home/\$USER/public_html/"
-echo "2. Contact internals-win@lists.php.net for Windows build creation"
+echo "2. Contact release-managers@php.net for Windows build creation"
 if [ -z "$VERSION_EXTRA" ]; then
   echo "3. This appears to be a release build.  Reference README.RELEASE_PROCESS for further instruction."
 fi
