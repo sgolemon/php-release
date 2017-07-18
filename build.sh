@@ -17,7 +17,7 @@ RELEASE_VERSION=${RELEASE_VERSION:?"RELEASE_VERSION is not set"}
 VERSION_MAJOR=$(echo "$RELEASE_VERSION" | cut -d "." -f 1)
 VERSION_MINOR=$(echo "$RELEASE_VERSION" | cut -d "." -f 2)
 VERSION_PATCH=$(echo "$RELEASE_VERSION" | cut -d "." -f 3 | egrep -o "[0-9]+" | head -n 1)
-POINT_RELEASE_BRANCH="PHP-${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH}"
+POINT_RELEASE_BRANCH="PHP-${VERSION_MAJOR}.${VERSION_MINOR}"
 if [ "$VERSION_PATCH" != "$(echo $1 | cut -d '.' -f 3)" ]; then
   # This is an alpha/beta/RC
   OFFSET=$((${#VERSION_PATCH}+1))
@@ -46,13 +46,9 @@ cp /manifest.sh /sign.sh /workspace/bin/
 # Configure commiter,
 # then update branch to git.php.net
 cd /workspace
-git clone --depth="${CLONE_DEPTH:-1000}" git://github.com/php/php-src
+git clone -b "$RELEASE_BRANCH" --depth="${CLONE_DEPTH:-1000}" git://github.com/php/php-src
 
 cd /workspace/php-src
-git rev-parse -q --verify "$RELEASE_BRANCH" > /dev/null || (
-  echo "$RELEASE_BRANCH does not exist in php-src"
-  exit 1
-)
 
 echo "Building $RELEASE_VERSION from $RELEASE_BRANCH"
 if [[ "$VERSION_EXTRA" != alpha* ]]; then
@@ -70,7 +66,6 @@ if [[ "$VERSION_EXTRA" != alpha* ]]; then
 fi
 
 # Get going
-git checkout "$RELEASE_BRANCH"
 git config user.name "$COMMITTER_NAME"
 git config user.email "$COMMITTER_EMAIL"
 git remote set-url origin --push git@git.php.net:php-src.git
