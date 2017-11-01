@@ -18,6 +18,7 @@ VERSION_MAJOR=$(echo "$RELEASE_VERSION" | cut -d "." -f 1)
 VERSION_MINOR=$(echo "$RELEASE_VERSION" | cut -d "." -f 2)
 VERSION_PATCH=$(echo "$RELEASE_VERSION" | cut -d "." -f 3 | egrep -o "[0-9]+" | head -n 1)
 POINT_RELEASE_BRANCH="PHP-${VERSION_MAJOR}.${VERSION_MINOR}"
+RC_RELEASE_BRANCH="${POINT_RELEASE_BRANCH}.${VERSION_PATCH}"
 if [ "$VERSION_PATCH" != "$(echo $1 | cut -d '.' -f 3)" ]; then
   # This is an alpha/beta/RC
   OFFSET=$((${#VERSION_PATCH}+1))
@@ -31,7 +32,12 @@ echo "-------------------"
 echo "COMMITTER_NAME=${COMMITTER_NAME}"
 echo "COMMITTER_EMAIL=${COMMITTER_EMAIL}"
 echo "RELEASE_DATE=${RELEASE_DATE}"
-echo "RELEASE_BRANCH=${RELEASE_BRANCH}"
+echo -n "RELEASE_BRANCH="
+if [  -z "$CUT_RELEASE_BRANCH" ]; then
+  echo "$RELEASE_BRANCH"
+else
+  echo "$CUT_RELEASE_BRANCH (new branch cut from $RELEASE_BRANCH)"
+fi
 echo "RELEASE_VERSION=${RELEASE_VERSION}"
 echo "-------------------"
 
@@ -50,14 +56,18 @@ git clone -b "$RELEASE_BRANCH" --depth="${CLONE_DEPTH:-1000}" git://github.com/p
 
 cd /workspace/php-src
 
-echo "Building $RELEASE_VERSION from $RELEASE_BRANCH"
+if [ ! -z "${CUT_RELEASE_BRANCH}" ]; then
+  echo "Cutting ${CUT_RELEASE_BRANCH} from ${RELEASE_BRANCH}"
+  git checkout -b "${CUT_RELEASE_BRANCH}"
+fi
+
+echo "Building $RELEASE_VERSION from ${CUT_RELEASE_BRANCH:-$RELEASE_BRANCH}"
 if [[ "$VERSION_EXTRA" != alpha* ]]; then
-  if [ "$POINT_RELEASE_BRANCH" != "$RELEASE_BRANCH" ]; then
+  if [ "$POINT_RELEASE_BRANCH" != "$RELEASE_BRANCH" -a \
+       "$RC_RELEASE_BRANCH" != "$CUT_RELEASE_BRANCH" ]; then
     echo "******************************************" 1>&2
-    echo -n "** WARNING: $RELEASE_VERSION probably belongs on $POINT_RELEASE_BRANCH" 1>&2
-    git rev-parse -q --verify "$POINT_RELEASE_BRANCH" > /dev/null && (
-      echo -n ", which does exist" 1>&2
-    ) || true
+    echo -n "** WARNING: $RELEASE_VERSION probably belongs on " 1>&2
+    echo -n "$POINT_RELEASE_BRANCH or $RC_RELEASE_BRANCH" 1>&2
     echo ", but is being cut from $RELEASE_BRANCH" 1>&2
     echo -ne '\007\007\007'
     echo "******************************************" 1>&2
@@ -220,7 +230,7 @@ if [ ! -z "$RELEASE_NEXT" ]; then
 fi
 
 echo "If all is well, push it!"
-echo "$ git push origin 'php-$RELEASE_VERSION' ${RELEASE_NEXT:+'${RELEASE_BRANCH}'}"
+echo "$ git push origin 'php-$RELEASE_VERSION' '${CUT_RELEASE_BRANCH:-${RELEASE_BRANCH}}'"
 echo ""
 
 echo "Make the tarballs available for testing:"

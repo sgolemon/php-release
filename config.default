@@ -14,9 +14,11 @@ COMMITTER_EMAIL="ada@example.com"
 ## Where to build/cut this release from (required)
 RELEASE_BRANCH="PHP-7.2"
 
+## Name of new branch to cut from $RELEASE_BRANCH
+# This branch then becomes the release branch.
+# CUT_RELEASE_BRANCH="PHP-7.2.0"
+
 ## Semantic identifier for this release (required)
-## Alpha releases in the form "#.#.#alpha..." will NOT cut a new branch
-## All other release versions will cut branch "PHP-#.#.#" unless it exists already
 RELEASE_VERSION="7.2.0alpha1"
 
 ## If provided, the NEWS file will be auto prepared for the next release (optional; recommended)
