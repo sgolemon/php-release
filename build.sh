@@ -64,6 +64,7 @@ fi
 echo "Building $RELEASE_VERSION from ${CUT_RELEASE_BRANCH:-$RELEASE_BRANCH}"
 if [[ "$VERSION_EXTRA" != alpha* ]]; then
   if [ "$POINT_RELEASE_BRANCH" != "$RELEASE_BRANCH" -a \
+       "$RC_RELEASE_BRANCH" != "$RELEASE_BRANCH" -a \
        "$RC_RELEASE_BRANCH" != "$CUT_RELEASE_BRANCH" ]; then
     echo "******************************************" 1>&2
     echo -n "** WARNING: $RELEASE_VERSION probably belongs on " 1>&2
