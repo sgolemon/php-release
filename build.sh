@@ -84,12 +84,19 @@ git remote set-url origin --push git@git.php.net:php-src.git
 
 # Update NEWS
 cd /workspace/php-src
+NEWS_FILE_SLUG="$(date -d ${RELEASE_DATE} '+%d %b %Y'), PHP ${RELEASE_VERSION}"
 sed -i \
-    -e "s/?? ??? \(????\|[0-9]\{4\}\),.*/$(date -d ${RELEASE_DATE} '+%d %b %Y'), PHP ${RELEASE_VERSION}/g" \
+    -e "s/?? ??? \(????\|[0-9]\{4\}\),.*/${NEWS_FILE_SLUG}/g" \
     NEWS
-git add NEWS
-git commit -m "Update NEWS for PHP ${RELEASE_VERSION}"
-git show | cat -
+if [ ! -z "$(git diff NEWS)" ]; then
+  git add NEWS
+  git commit -m "Update NEWS for PHP ${RELEASE_VERSION}"
+  git show | cat -
+elif [ -z "$(grep "${NEWS_FILE_SLUG}" NEWS)" ]; then
+  echo "NEWS file has neither target release date, nor ?? ??? placeholder" 1>&2
+  echo "Correct this and try again." 1>&2
+  exit 1
+fi
 
 # Update CREDITS
 cd /workspace/php-src
