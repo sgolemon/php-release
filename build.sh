@@ -88,7 +88,7 @@ NEWS_FILE_SLUG="$(date -d ${RELEASE_DATE} '+%d %b %Y'), PHP ${RELEASE_VERSION}"
 sed -i \
     -e "s/?? ??? \(????\|[0-9]\{4\}\),.*/${NEWS_FILE_SLUG}/g" \
     NEWS
-if [ ! -z "$(git diff NEWS)" ]; then
+if [ ! -z "$(git diff -- NEWS)" ]; then
   git add NEWS
   git commit -m "Update NEWS for PHP ${RELEASE_VERSION}"
   git show | cat -
