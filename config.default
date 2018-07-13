@@ -24,6 +24,10 @@ RELEASE_VERSION="7.2.0alpha1"
 ## If provided, the NEWS file will be auto prepared for the next release (optional; recommended)
 RELEASE_NEXT="7.2.0alpha2"
 
+## Remove the default re2c installed by Debian Jessie (0.13.5)
+## and build re2c from source at this tag instead
+# RE2C_VERSION="1.0.3"
+
 ## Limit `git clone` checkout depth (optional; default 1000)
 # CLONE_DEPTH=1000
 

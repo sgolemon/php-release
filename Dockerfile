@@ -17,6 +17,10 @@ RUN apt-get update && apt-get update --fix-missing && \
     && rm -rf /var/lib/apt/lists/*
 RUN ln -s /usr/include/x86_64-linux-gnu/gmp.h /usr/include/gmp.h
 
+# Prepare a build of re2c 1.0.3 since Jessie only delivers 0.13.5
+RUN (cd /usr/src && git clone -b 1.0.3 git://github.com/skvadrik/re2c.git re2c-1.0.3 && \
+     cd re2c-1.0.3/re2c && ./autogen.sh && ./configure --prefix=/usr && make -j $(nproc))
+
 VOLUME ["/workspace"]
 
 COPY ./build.sh /build.sh

@@ -40,7 +40,29 @@ else
   echo "$CUT_RELEASE_BRANCH (new branch cut from $RELEASE_BRANCH)"
 fi
 echo "RELEASE_VERSION=${RELEASE_VERSION}"
+if [ ! -z "$RE2C_VERSION" ]; then
+  echo "RE2C_VERSION=${RE2C_VERSION} (instead of distro version: $(re2c --version))"
+fi
 echo "-------------------"
+
+# Update re2c
+if [ ! -z "$RE2C_VERSION" ]; then
+  echo "Removing distro re2c"
+  if [ -d "/usr/src/re2c-${RE2C_VERSION}/re2c" ]; then
+    echo "Using pre-built re2c from /usr/src/re2c-${RE2C_VERSION}"
+    cd "/usr/src/re2c-${RE2C_VERSION}/re2c"
+  else
+    echo "Building re2c-${RE2C_VERSION} from source"
+    cd /usr/src
+    git clone -b "${RE2C_VERSION}" --depth=1 git://github.com/skvadrik/re2c.git re2c
+    cd re2c/re2c
+    ./autogen.sh && ./configure --prefix=/usr
+    make -j $(nproc)
+  fi
+  dpkg -r re2c
+  make install
+  re2c --version
+fi
 
 # Clean up workspace
 cd /workspace
