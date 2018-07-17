@@ -265,7 +265,11 @@ echo "$ git push origin 'php-$RELEASE_VERSION' '${CUT_RELEASE_BRANCH:-${RELEASE_
 echo ""
 
 echo "Make the tarballs available for testing:"
-echo "1. Copy workspace/php-src/php-$RELEASE_VERSION.tar.{gz,bz2,xz}{,.asc} to \$USER@downloads.php.net:public_html/"
+if [ -z "$VERSION_EXTRA" ]; then
+  echo "1. Copy workspace/php-src/php-$RELEASE_VERSION.tar.{gz,bz2,xz}{,.asc} to php-distributions repository"
+else
+  echo "1. Copy workspace/php-src/php-$RELEASE_VERSION.tar.{gz,bz2,xz}{,.asc} to \$USER@downloads.php.net:public_html/"
+fi
 echo "2. Contact release-managers@php.net for Windows build creation"
 if [ ! -z "${CUT_RELEASE_BRANCH}" ]; then
   echo "3. Bump version in ${RELEASE_BRANCH}"
