@@ -39,6 +39,9 @@ RELEASE_NEXT="7.2.0alpha2"
 ## This value is only used to help produce helpful finalization instructions
 # GPG_KEY="123456789012345678901234"
 
+## command to use to sign the generated tarballs, e.g. /usr/bin/gpg1, /usr/bin/gpg2...
+# GPG_CMD=gpg
+
 ## Set to 0 to allow `run-tests.php` to encounter failures without aborting packaging (optional; default on)
 # ABORT_ON_TEST_FAILURES=1
 
