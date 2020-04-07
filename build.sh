@@ -248,7 +248,7 @@ echo "Tarballs prepared"
 /workspace/bin/manifest.sh "/workspace/php-src/php-$RELEASE_VERSION.tar"
 
 echo "Run the following command in workspace/php-src to sign everything:"
-echo "$ ../bin/sign.sh . '$RELEASE_VERSION' '$TAG_COMMIT' '${GPG_KEY:-YOUR_GPG_KEY}' '${GPG_USER:-$COMMITTER_EMAIL}'"
+echo "$ ../bin/sign.sh . '$RELEASE_VERSION' '$TAG_COMMIT' '${GPG_KEY:-YOUR_GPG_KEY}' '${GPG_USER:-$COMMITTER_EMAIL}' '${GPG_CMD:-gpg}'"
 echo ""
 
 echo "Verify what you're about to push as a tagged release:"
