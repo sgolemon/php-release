@@ -2,7 +2,7 @@
 
 This is an attempt to standardize and automate most of the build process for PHP releases. It is based heavily on dshafik/php-build.
 
-This container is currently based on `debian:jessie`.
+This container is currently based on `ubuntu:xenial`.
 
 It will do the following:
 
@@ -34,3 +34,11 @@ docker run --rm -v/home/$USER/workspace:/workspace sgolemon/php-release
 ```
 
 This will pull the image from hub.docker.com and run it.
+
+### Debian Jessie
+
+For the earlier, debian:jessie version of this docker image, use:
+
+```sh
+docker run --rm -v/home/$USER/workspace:/workspace sgolemon/php-release:jessie
+```

@@ -148,11 +148,14 @@ git add main/php_version.h
 
 # Update configure.ac
 cd /workspace/php-src
+# First four lines for 7.3 and earlier
+# Last transformation for 7.4 and later
 sed -i \
     -e "s/^PHP_MAJOR_VERSION=[0-9]\+$/PHP_MAJOR_VERSION=$VERSION_MAJOR/g" \
     -e "s/^PHP_MINOR_VERSION=[0-9]\+$/PHP_MINOR_VERSION=$VERSION_MINOR/g" \
     -e "s/^PHP_RELEASE_VERSION=[0-9]\+$/PHP_RELEASE_VERSION=$VERSION_PATCH/g" \
     -e "s/^PHP_EXTRA_VERSION=\".\+\"$/PHP_EXTRA_VERSION=\"$VERSION_EXTRA\"/g" \
+    -e "s/^AC_INIT(\[PHP\], *\[.*\?\],/AC_INIT([PHP],[$RELEASE_VERSION],/g" \
     "$CONFIGURE_AC"
 git add "$CONFIGURE_AC"
 
@@ -177,13 +180,21 @@ make_test() {
 
   # Build PHP
   mkdir -p /workspace/log
+  rm -f "/workspace/log/config.$LOGEXT" "/workspace/log/make.$LOGEXT"
   cd /workspace/php-src
   git clean -xfdq
   ENABLE_DEBUG=${1:?"DEBUG opt not specific"} \
   ENABLE_MAINTAINER_ZTS=${2:?"ZTS opt not specified"} \
   CONFIG_LOG_FILE=/workspace/log/config.$LOGEXT \
   MAKE_LOG_FILE=/workspace/log/make.$LOGEXT \
-    travis/compile.sh 2> /dev/null
+  CONFIG_ONLY=1 \
+    travis/compile.sh
+
+  if [ "${VERSION_ID}" -ge 80000 ]; then
+    # Older PHP branches ignore the `CONFIG_ONLY` setting and have already built.
+    make all -j$(nproc) 2>&1 >> "/workspace/log/make.$LOGEXT"
+  fi
+
   BUILT_VERSION=$(./sapi/cli/php -n -v | head -n 1 | cut -d " " -f 2)
   if [ "$BUILT_VERSION" != "$RELEASE_VERSION" ]; then
     echo "**Panic: RELEASE_VERSION=${RELEASE_VERSION}, but BUILT_VERSION=${BUILT_VERSION}"
@@ -219,7 +230,11 @@ cd /workspace/php-src
 echo "-----------------"
 echo "Bundling tarballs"
 git tag "php-$RELEASE_VERSION" "$TAG_COMMIT"
-PHPROOT=. ./makedist "$RELEASE_VERSION"
+if [ "${VERSION_ID}" -ge 70400 ]; then
+  scripts/dev/makedist "php-$RELEASE_VERSION"
+else
+  PHPROOT=. ./makedist "$RELEASE_VERSION"
+fi
 git tag -d "php-$RELEASE_VERSION"
 
 # Back off of release spur now that we've tagged
