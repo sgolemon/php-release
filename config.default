@@ -5,6 +5,8 @@ COMMITTER_EMAIL="ada@example.com"
 ## If both are set, workspace/php-src will be
 ## auto-chown'd at the end of the build process
 ## Values MUST BE NUMERIC (since docker can't see your passwd file, duh)
+## Needed when container run with docker under an unprivileged account.
+## Not needed when container run with podman.
 # COMMITTER_UID=1000
 # COMMITTER_GID=1000
 
