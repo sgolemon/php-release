@@ -8,7 +8,7 @@ COMMITTER_EMAIL="ada@example.com"
 # COMMITTER_UID=1000
 # COMMITTER_GID=1000
 
-## Planned release date (optional; default="thursday")
+## Planned release date (optional; default="thursday"; format=YYYY-MM-DD)
 # RELEASE_DATE="2017-07-20"
 
 ## Where to build/cut this release from (required)
