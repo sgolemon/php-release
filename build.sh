@@ -155,7 +155,7 @@ sed -i \
     -e "s/^PHP_MINOR_VERSION=[0-9]\+$/PHP_MINOR_VERSION=$VERSION_MINOR/g" \
     -e "s/^PHP_RELEASE_VERSION=[0-9]\+$/PHP_RELEASE_VERSION=$VERSION_PATCH/g" \
     -e "s/^PHP_EXTRA_VERSION=\".\+\"$/PHP_EXTRA_VERSION=\"$VERSION_EXTRA\"/g" \
-    -e "s/^AC_INIT(\[PHP\], *\[.*\?\],/AC_INIT([PHP],[$RELEASE_VERSION],/g" \
+    -e "s/^AC_INIT(\[PHP\], *\[[^\]]*\?\],/AC_INIT([PHP],[$RELEASE_VERSION],/g" \
     "$CONFIGURE_AC"
 git add "$CONFIGURE_AC"
 
@@ -190,7 +190,7 @@ make_test() {
   CONFIG_ONLY=1 \
     travis/compile.sh
 
-  if [ "${VERSION_ID}" -ge 80000 ]; then
+  if [ "${VERSION_ID}" -ge 70400 ]; then
     # Older PHP branches ignore the `CONFIG_ONLY` setting and have already built.
     make all -j$(nproc) 2>&1 >> "/workspace/log/make.$LOGEXT"
   fi
