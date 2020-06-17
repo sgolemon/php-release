@@ -193,7 +193,7 @@ make_test() {
 
   if [ "${VERSION_ID}" -ge 70400 ]; then
     # Older PHP branches ignore the `CONFIG_ONLY` setting and have already built.
-    make all -j$(nproc) 2>&1 >> "/workspace/log/make.$LOGEXT"
+    make all -j$(nproc) 2>&1 | tee -a "/workspace/log/make.$LOGEXT"
   fi
 
   BUILT_VERSION=$(./sapi/cli/php -n -v | head -n 1 | cut -d " " -f 2)
