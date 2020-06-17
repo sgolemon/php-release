@@ -156,6 +156,7 @@ sed -i \
     -e "s/^PHP_RELEASE_VERSION=[0-9]\+$/PHP_RELEASE_VERSION=$VERSION_PATCH/g" \
     -e "s/^PHP_EXTRA_VERSION=\".\+\"$/PHP_EXTRA_VERSION=\"$VERSION_EXTRA\"/g" \
     -e "s/^AC_INIT(\[PHP\], *\[[^\]]*\?\],/AC_INIT([PHP],[$RELEASE_VERSION],/g" \
+    -e "s/^AC_INIT(\[PHP\], *\[[^,]*\],/AC_INIT([PHP],[$RELEASE_VERSION],/g" \
     "$CONFIGURE_AC"
 git add "$CONFIGURE_AC"
 
