@@ -33,12 +33,24 @@ The build process will create/overwrite the following folders and files within `
 docker run --rm -v/home/$USER/workspace:/workspace sgolemon/php-release
 ```
 
+or
+
+```sh
+podman run --rm -v/home/$USER/workspace:/workspace sgolemon/php-release
+```
+
 This will pull the image from hub.docker.com and run it.
 
 ### Debian Jessie
 
-For the earlier, debian:jessie version of this docker image, use:
+For the earlier, debian:jessie version of this image, use:
 
 ```sh
 docker run --rm -v/home/$USER/workspace:/workspace sgolemon/php-release:jessie
+```
+
+or
+
+```sh
+podman run --rm -v/home/$USER/workspace:/workspace sgolemon/php-release:jessie
 ```
