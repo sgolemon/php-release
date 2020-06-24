@@ -184,7 +184,10 @@ make_test() {
   rm -f "/workspace/log/config.$LOGEXT" "/workspace/log/make.$LOGEXT"
   cd /workspace/php-src
   git clean -xfdq
+  # ENABLE_ZTS on 8.0 and later, ENABLE_MAINTAINER_ZTS on 7.4 and earleir
+  # Setting both is harmless.
   ENABLE_DEBUG=${1:?"DEBUG opt not specific"} \
+  ENABLE_ZTS=${2:?"ZTS opt not specified"} \
   ENABLE_MAINTAINER_ZTS=${2:?"ZTS opt not specified"} \
   CONFIG_LOG_FILE=/workspace/log/config.$LOGEXT \
   MAKE_LOG_FILE=/workspace/log/make.$LOGEXT \
