@@ -213,7 +213,7 @@ make_test() {
   REPORT_EXIT_STATUS=${ABORT_ON_TEST_FAILURES:-1} \
   sapi/cli/php run-tests.php \
     -p "$(pwd)/sapi/cli/php" -q -s /workspace/log/tests.$LOGEXT \
-    --offline --set-timeout 120
+    --offline --set-timeout 120 -j$(nproc)
 }
 
 MAKE_TESTS="${MAKE_TESTS:-2}"
