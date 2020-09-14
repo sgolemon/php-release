@@ -13,6 +13,8 @@ RELEASE_DATE=${RELEASE_DATE:-`date +%Y-%m-%d -d 'thursday'`}
 RELEASE_BRANCH=${RELEASE_BRANCH:?"RELEASE_BRANCH is not set"}
 RELEASE_VERSION=${RELEASE_VERSION:?"RELEASE_VERSION is not set"}
 CONFIGURE_AC=${CONFIGURE_AC:-"configure.ac"}
+MAKE_JOBS=${MAKE_JOBS:-`nproc`}
+TEST_JOBS=${TEST_JOBS:-`nproc`}
 
 # Translate version
 VERSION_MAJOR=$(echo "$RELEASE_VERSION" | cut -d "." -f 1)
@@ -57,7 +59,7 @@ if [ ! -z "$RE2C_VERSION" ]; then
     git clone -b "${RE2C_VERSION}" --depth=1 git://github.com/skvadrik/re2c.git re2c
     cd re2c/re2c
     ./autogen.sh && ./configure --prefix=/usr
-    make -j $(nproc)
+    make -j ${MAKE_JOBS}
   fi
   dpkg -r re2c
   make install
@@ -196,7 +198,7 @@ make_test() {
 
   if [ "${VERSION_ID}" -ge 70400 ]; then
     # Older PHP branches ignore the `CONFIG_ONLY` setting and have already built.
-    make all -j$(nproc) 2>&1 | tee -a "/workspace/log/make.$LOGEXT"
+    make all -j ${MAKE_JOBS} 2>&1 | tee -a "/workspace/log/make.$LOGEXT"
   fi
 
   BUILT_VERSION=$(./sapi/cli/php -n -v | head -n 1 | cut -d " " -f 2)
@@ -206,6 +208,11 @@ make_test() {
   fi
 
   # Run tests
+  TEST_JOBS_ARG=""
+  if [ "${VERSION_ID}" -ge 70400 ]; then
+    TEST_JOBS_ARG="-j${TEST_JOBS}"
+  fi
+
   mkdir -p /workspace/log
   cd /workspace/php-src
   TEST_FPM_RUN_AS_ROOT=1 \
@@ -213,7 +220,8 @@ make_test() {
   REPORT_EXIT_STATUS=${ABORT_ON_TEST_FAILURES:-1} \
   sapi/cli/php run-tests.php \
     -p "$(pwd)/sapi/cli/php" -q -s /workspace/log/tests.$LOGEXT \
-    --offline --set-timeout 120
+    --offline --set-timeout 120 \
+    ${TEST_JOBS_ARG}
 }
 
 MAKE_TESTS="${MAKE_TESTS:-2}"

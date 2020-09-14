@@ -52,3 +52,8 @@ RELEASE_NEXT="7.2.0alpha2"
 ## Set to 2 to build/test all four combinations (optional; default 2)
 # MAKE_TESTS=2
 
+## Number of parallel jobs to dispatch for `make all` stage.
+# MAKE_JOBS=$(nproc)
+
+## Number of parallel jobs to dispatch for `run-tests.php` stage.
+# TEST_JOBS=$(nproc)
