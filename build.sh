@@ -148,6 +148,20 @@ echo \
 #define PHP_VERSION_ID $VERSION_ID" > main/php_version.h
 git add main/php_version.h
 
+# Update Zend/zend.h
+cd /workspace/php-src
+if [ -z "$ZEND_VERSION" ]; then
+    # Either configure ZEND_VERSION in config file, or compute it relative to PHP version
+    if [ "$VERSION_MAJOR" -lt 7 ]; then
+        ZEND_VERSION="$((VERSION_MAJOR - 3))"
+    else
+        ZEND_VERSION="$(($VERSION_MAJOR - 4))"
+    fi
+    ZEND_VERSION="${ZEND_VERSION}.${VERSION_MINOR}.${VERSION_PATCH}${VERSION_EXTRA}"
+fi
+sed -i -e "s/^#define ZEND_VERSION \".*\"$/#define ZEND_VERSION \"${ZEND_VERSION}\"/g" Zend/zend.h
+git add Zend/zend.h
+
 # Update configure.ac
 cd /workspace/php-src
 # First four lines for 7.3 and earlier
