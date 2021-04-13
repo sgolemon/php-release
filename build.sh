@@ -75,9 +75,9 @@ cp /manifest.sh /sign.sh /workspace/bin/
 
 # Clone from github (public readable),
 # Configure commiter,
-# then update branch to git.php.net
+# then update branch to github.com/php/php-src
 cd /workspace
-git clone -b "$RELEASE_BRANCH" --depth="${CLONE_DEPTH:-1000}" git://github.com/php/php-src
+git clone -b "$RELEASE_BRANCH" --depth="${CLONE_DEPTH:-1000}" git@github.com:php/php-src.git
 
 cd /workspace/php-src
 
@@ -104,7 +104,7 @@ fi
 # Get going
 git config user.name "$COMMITTER_NAME"
 git config user.email "$COMMITTER_EMAIL"
-git remote set-url origin --push git@git.php.net:php-src.git
+git remote set-url origin --push git@github.com:php/php-src.git
 
 # Update NEWS
 cd /workspace/php-src
