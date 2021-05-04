@@ -2,6 +2,11 @@
 COMMITTER_NAME="Ada Lovelace"
 COMMITTER_EMAIL="ada@example.com"
 
+## Where to fetch the repo from, and where to push to.
+# PHP_REPO_FETCH="git://github.com/php/php-src"
+# PHP_REPO_PUSH="git@github.com:php/php-src"
+
+
 ## If both are set, workspace/php-src will be
 ## auto-chown'd at the end of the build process
 ## Values MUST BE NUMERIC (since docker can't see your passwd file, duh)

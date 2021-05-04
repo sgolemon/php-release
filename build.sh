@@ -16,6 +16,9 @@ CONFIGURE_AC=${CONFIGURE_AC:-"configure.ac"}
 MAKE_JOBS=${MAKE_JOBS:-`nproc`}
 TEST_JOBS=${TEST_JOBS:-`nproc`}
 
+PHP_REPO_FETCH=${PHP_REPO_FETCH:-"git://github.com/php/php-src"}
+PHP_REPO_PUSH=${PHP_REPO_PUSH:-"git@github.com:php/php-src"}
+
 # Translate version
 VERSION_MAJOR=$(echo "$RELEASE_VERSION" | cut -d "." -f 1)
 VERSION_MINOR=$(echo "$RELEASE_VERSION" | cut -d "." -f 2)
@@ -73,11 +76,12 @@ rm -f  log/{config,make,tests}.{debug-,}[nz]ts
 mkdir -p /workspace/bin
 cp /manifest.sh /sign.sh /workspace/bin/
 
-# Clone from github (public readable),
+# Clone from source (using public readable),
 # Configure commiter,
-# then update branch to git.php.net
+# then update branch to push destination
+echo "Cloning from ${PHP_REPO_FETCH}"
 cd /workspace
-git clone -b "$RELEASE_BRANCH" --depth="${CLONE_DEPTH:-1000}" git://github.com/php/php-src
+git clone -b "$RELEASE_BRANCH" --depth="${CLONE_DEPTH:-1000}" "${PHP_REPO_FETCH}"
 
 cd /workspace/php-src
 
@@ -104,7 +108,7 @@ fi
 # Get going
 git config user.name "$COMMITTER_NAME"
 git config user.email "$COMMITTER_EMAIL"
-git remote set-url origin --push git@git.php.net:php-src.git
+git remote set-url origin --push "${PHP_REPO_PUSH}"
 
 # Update NEWS
 cd /workspace/php-src
@@ -301,7 +305,7 @@ if [ ! -z "$RELEASE_NEXT" ]; then
   echo ""
 fi
 
-echo "If all is well, push it!"
+echo "If all is well, push it to ${PHP_REPO_PUSH}!"
 echo "$ git push origin 'php-$RELEASE_VERSION' '${CUT_RELEASE_BRANCH:-${RELEASE_BRANCH}}'"
 echo ""
 
