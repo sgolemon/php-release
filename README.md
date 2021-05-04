@@ -22,12 +22,15 @@ It will do the following:
 
 ## Running the Container
 
-You need to mount a workspace directory at `/workspace`.
+You need to create a `workspace` directory to mount into the container.
+This is where the build script will place artifacts.
 This directory must contain a `config` file (see `config.default` for settings).
 The build process will create/overwrite the following folders and files within `/workspace`:
 
 1. `php-src/`: The checkout from php-src. This checkout is performed fresh with every invocation of php-release.
 2. `log/{config,make,test}.{debug-,}{nts,zts}`: Results of ./configure, make, and make test across debug/non-debug zts/nts
+
+For example, assuming you created your workspace in your home directory, you could run the following:
 
 ```sh
 docker run --rm -v/home/$USER/workspace:/workspace sgolemon/php-release
@@ -39,7 +42,8 @@ or
 podman run --rm -v/home/$USER/workspace:/workspace sgolemon/php-release
 ```
 
-This will pull the image from hub.docker.com and run it.
+This will pull the image from hub.docker.com and run it,
+mounting your local `~/workspace` directory as `/workspace` within the container.
 
 ### Debian Jessie
 
