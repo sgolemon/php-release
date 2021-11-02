@@ -3,7 +3,7 @@ COMMITTER_NAME="Ada Lovelace"
 COMMITTER_EMAIL="ada@example.com"
 
 ## Where to fetch the repo from, and where to push to.
-# PHP_REPO_FETCH="git://github.com/php/php-src"
+# PHP_REPO_FETCH="https://github.com/php/php-src"
 # PHP_REPO_PUSH="git@github.com:php/php-src"
 
 

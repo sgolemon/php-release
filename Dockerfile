@@ -17,7 +17,7 @@ RUN apt-get update && apt-get update --fix-missing && \
 	libxslt1-dev libzip-dev build-essential git autoconf bison libffi-dev libreadline-dev
 
 # Prepare a build of re2c 1.0.3 since Xenial only delivers 0.16
-RUN (cd /usr/src && git clone -b 1.0.3 git://github.com/skvadrik/re2c.git re2c-1.0.3 && \
+RUN (cd /usr/src && git clone -b 1.0.3 https://github.com/skvadrik/re2c.git re2c-1.0.3 && \
      cd re2c-1.0.3/re2c && ./autogen.sh && ./configure --prefix=/usr && make -j $(nproc))
 
 VOLUME ["/workspace"]

@@ -16,7 +16,7 @@ CONFIGURE_AC=${CONFIGURE_AC:-"configure.ac"}
 MAKE_JOBS=${MAKE_JOBS:-`nproc`}
 TEST_JOBS=${TEST_JOBS:-`nproc`}
 
-PHP_REPO_FETCH=${PHP_REPO_FETCH:-"git://github.com/php/php-src"}
+PHP_REPO_FETCH=${PHP_REPO_FETCH:-"https://github.com/php/php-src"}
 PHP_REPO_PUSH=${PHP_REPO_PUSH:-"git@github.com:php/php-src"}
 
 # Translate version
@@ -59,7 +59,7 @@ if [ ! -z "$RE2C_VERSION" ]; then
   else
     echo "Building re2c-${RE2C_VERSION} from source"
     cd /usr/src
-    git clone -b "${RE2C_VERSION}" --depth=1 git://github.com/skvadrik/re2c.git re2c
+    git clone -b "${RE2C_VERSION}" --depth=1 https://github.com/skvadrik/re2c.git re2c
     cd re2c/re2c
     ./autogen.sh && ./configure --prefix=/usr
     make -j ${MAKE_JOBS}
